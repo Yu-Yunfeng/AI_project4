@@ -14,13 +14,16 @@ class tree(object):
 class Decision_tree(object):
     attributes_list=[]
     # print(self.data)
-    def __init__(self):
+    def __init__(self,filename,):
         ''',filename'''
-        self.data = pd.read_csv('iris.data.discrete.txt', header=None)
+        self.data = pd.read_csv(filename, header=None)
+
+    def reload_data(self,data):
+        self.data = data;
 
     def importance(self, attributes, examples):  # attributes is the list of attribute
         info = self.get_info(examples)
-        print("dddd",info)
+#        print("dddd",info)
         max = 0
         final=0
         for i in attributes:
@@ -29,7 +32,7 @@ class Decision_tree(object):
             if information_gain > max:
                 max = information_gain
                 final = i
-        print(max)
+#        print(max)
         return final
 
     def get_info_attribute(self, examples, attribute):
@@ -112,16 +115,20 @@ class Decision_tree(object):
         return dtree2
 
     def have_same_classification(self, examples):
-        count = 0
-        for i in range(examples.iloc[:, 0].size - 1):
-            if examples.loc[i,examples.columns.size-1]==examples.loc[i+1,examples.columns.size-1]:
-                count += 1
-            else:
-                break
-        if count == examples.iloc[:, 0].size-1 :
-            return True
-        else:
-            return False
+        # count = 0
+        # for i in range(examples.iloc[:, 0].size - 1):
+        #     if examples.loc[i,examples.columns.size-1]==examples.loc[i+1,examples.columns.size-1]:
+        #         count += 1
+        #     else:
+        #         break
+        # if count == examples.iloc[:, 0].size-1 :
+        #     return True
+        # else:
+        #     return False
+
+        if(examples[examples.keys()[-1]].nunique() == 1):
+            return True;
+        return False;
 
     def decision_tree(self, examples, attributes, parents_examples):
         tmp_example=examples
@@ -139,7 +146,7 @@ class Decision_tree(object):
             at=attributes.copy()
             at.remove(attributes[len(attributes)-1])
             attr = self.importance(at, examples)
-            print(attr)
+#            print(attr)
             dtree = tree(attr)
             value_dict = {}
             columns_list=[]
@@ -167,11 +174,31 @@ class Decision_tree(object):
                 dtree.children.append(subtree)
         return dtree
 
+    def predict(self,test_data = [[]]):
+        predicted_labels = [];
+        for test_d in test_data:
+            t = self.tree;
+            while(len(t.value)!=0):
+                answer = test_d[int(t.name)];
+                answer_pos = -1;
+                for index,v in enumerate(t.value):
+                    if(v==answer):
+                        answer_pos = index;
+                        break;
+
+                next_t = t.children[answer_pos];
+                t = next_t;
+            label = t.name;
+            predicted_labels.append([label]);
+        return predicted_labels;
+
+
     def run(self):
 
         self.attributes_list = self.data.columns.values.tolist()
         # attributes_list.remove(len(attributes_list) - 1)
         t = self.decision_tree(self.data, self.attributes_list, None)
+        self.tree = t;
         return t
 
 
@@ -207,7 +234,15 @@ def main():
     # input=sys.argv[1]
 
     dc = Decision_tree()
-    d_print(dc.run())
+#    print(dc.attributes_list)
+    dc.run();
+    data = pd.read_csv('iris.data.txt', header=None).values;
+
+#    print(data)
+    pre = dc.predict(data)
+
+    d_print(dc.tree);
+#    d_print(dc.run())
 
 
 if __name__ == "__main__":
