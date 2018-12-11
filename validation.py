@@ -4,7 +4,7 @@ from sklearn.metrics import average_precision_score,precision_score;
 import dacision_tree as dt;
 import pandas as pd
 from sklearn.preprocessing import label_binarize;
-#
+##
 def avg_precision(y_test,y_pre):
     precision = dict();
     Y_test = label_binarize(y_test,classes=['Iris-setosa','Iris-versicolor','Iris-virginica']);
