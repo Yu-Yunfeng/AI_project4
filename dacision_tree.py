@@ -202,10 +202,10 @@ class Decision_tree(object):
         return t
 
 
-def print_tree(t):
-    print("name:", t.name, "value:", t.value)
-    for i in t.children:
-        print_tree(i)
+# def print_tree(t):
+#     print("name:", t.name, "value:", t.value)
+#     for i in t.children:
+#         print_tree(i)
 
 
 def bfs(t):
@@ -229,21 +229,32 @@ def d_print(t):
         print("\n")
 
 
-def main():
+def main(filename,mode):
     # argv: python dacision_tree.py iris.data.txt 0.3 0.2 0.4 0.6  ->argv[2] is test condition
     # input=sys.argv[1]
 
-    dc = Decision_tree()
-#    print(dc.attributes_list)
+#    filename = 'iris.data.txt'
+    dc = Decision_tree(filename)
+    test_size = 0.2
+    train_size = 1.0-test_size;
+    data_size = len(dc.data);
+    train_data = dc.data.iloc[:int(train_size*data_size),:]
+    test_data = dc.data.iloc[int(train_size*data_size):,:].values
+
+    dc.reload_data(train_data)
     dc.run();
-    data = pd.read_csv('iris.data.txt', header=None).values;
+#    data = pd.read_csv(filename, header=None).values;
 
-#    print(data)
-    pre = dc.predict(data)
+    pre = dc.predict(test_data)
+#    print(pre)
+    if (mode == '2'):
+        print(pre)
+    if (mode == '1'):
+        d_print(dc.tree);
 
-    d_print(dc.tree);
-#    d_print(dc.run())
 
 
 if __name__ == "__main__":
-    main()
+    filename = sys.argv[1];
+    mode = sys.argv[2];
+    main(filename=filename,mode=mode)
