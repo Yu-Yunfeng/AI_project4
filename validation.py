@@ -40,7 +40,6 @@ if __name__ == "__main__":
         test_set = data.loc[test_indices];
         train_set.reset_index(inplace=True);
         train_set.drop(labels=['index'],inplace = True,axis = 1)
-
         decision_tree = dt.Decision_tree(filename);
         decision_tree.reload_data(train_set);
         decision_tree.run();
